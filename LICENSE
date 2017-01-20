@@ -1,6 +1,8 @@
+For everything outside the netlib_polyhedra directory:
+
 MIT License
 
-Copyright (c) 2017 hwatheod
+Copyright (c) 2017 Theodore Hwa
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +21,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+========================================================
+
+For the data in the netlib_polyhedra directory:
+
+The data files in the netlib_polyhedra directory are derived from the Netlib polyhedra
+data files. The original Netlib polyhedra data files can be found at: http://www.netlib.org/polyhedra/
+
+Some corrections to the Netlib polyhedra data files by George Hart.
+See http://www.georgehart.com/virtual-polyhedra/netlib-info.html for more information.

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Polyhedra</title>
+        <script type="text/javascript" src="solid_catalog.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+        <script type="text/javascript" src="https://www.x3dom.org/download/x3dom.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://www.x3dom.org/download/x3dom.css">
+        <link rel="stylesheet" type="text/css" href="solid.css">
+        <script>
+            var solidHtmlElements;
+            var solidGroupInfo = {
+                "platonic": {
+                    "minId": 0, "maxId": 4, "columns": 1
+                },
+                "archimedean": {
+                    "minId": 9, "maxId": 21, "columns": 2
+                },
+                "kepler": {
+                    "minId": 5, "maxId": 8, "columns": 1
+                },
+                "prism": {
+                    "minId": 22, "maxId": 31, "columns": 2
+                },
+                "johnson": {
+                    "minId": 45, "maxId": 136, "columns": 3
+                },
+                "catalan": {
+                    "minId": 32, "maxId": 44, "columns": 2
+                },
+                "nonconvex": {
+                    "minId": 137, "maxId": 141, "columns": 1
+                }
+            };
+
+            function getGroupElements(solidGroup) {
+                return getElementsInRange(solidGroupInfo[solidGroup]["minId"], solidGroupInfo[solidGroup]["maxId"]);
+            }
+
+            function getElementsInRange(minId, maxId) {
+                return solidHtmlElements.filter(
+                    function(solidHtmlElement) {
+                        var number = solidHtmlElement.attr("number");
+                        return minId <= number && number <= maxId;
+                    }
+                );
+            }
+
+            function openSolidGroup(solidGroup) {
+                $(".tabcontent").css("display", "none");
+                $(".tablinks").removeClass("active");
+                $("#" + solidGroup).css("display", "block");
+                $("#" + solidGroup + "-tab").addClass("active");
+            }
+
+            function formatFaceType(faceTypeList) {
+                var result = "";
+                faceTypeList.forEach(function(faceType) {
+                    result += faceType[1] + " with " + faceType[0] + " sides, ";
+                });
+                return result.slice(0, result.length - 2);
+            }
+
+            function showInfoFor(solidHtmlElement) {
+                $(".tabcontent").find("td").css("background-color", "");
+                solidHtmlElement.css("background-color", "yellow");
+                var number = solidHtmlElement.attr("number");
+
+                $("#inlineBox").attr("url", "x3d/p" + number + ".x3d");
+                $("#solidName").html(solid_catalog[number]["name"]);
+                $("#solidVertices").html(solid_catalog[number]["vertexCount"]);
+                $("#solidFaces").html(solid_catalog[number]["faceCount"]);
+                $("#solidFaceTypes").html(formatFaceType(solid_catalog[number]["faceTypes"]));
+
+                setTimeout(function() {
+                    $("#solid")[0].runtime.showAll("posX", true);
+                }, 300);
+            }
+
+            $(document).ready(function() {
+                // generate html elements (TD) for each solid
+                solidHtmlElements = [];
+                for (number in solid_catalog) {
+                    solidHtmlElements.push($("<td number='" + number + "'>" + solid_catalog[number]["name"] + "</td>"));
+                }
+                solidHtmlElements.sort(function (a,b) {
+                   return parseInt(a.attr("number")) - parseInt(b.attr("number"));
+                });
+
+                // set up the click events for each solid
+                solidHtmlElements.forEach(function(solidHtmlElement){
+                    solidHtmlElement.click(function(event) {
+                        showInfoFor(solidHtmlElement);
+                    });
+                });
+
+                var solidGroups = ["platonic", "archimedean", "kepler", "prism", "johnson", "catalan", "nonconvex"];
+
+                // fill the tab content for each solid group with the html elements for the solids in the group
+                solidGroups.forEach(function(solidGroup) {
+                    var groupElements = getGroupElements(solidGroup);
+                    var solidGroupTabContent = $("#" + solidGroup);
+                    solidGroupTabContent.append("<table></table>");
+                    var solidGroupTable = solidGroupTabContent.find("table");
+
+                    var i = 0;
+                    var columns = solidGroupInfo[solidGroup]["columns"];
+                    var latestTrElement;
+                    groupElements.forEach(function(groupElement) {
+                       if (i % columns == 0) {
+                           latestTrElement = $("<tr></tr>");
+                           solidGroupTable.append(latestTrElement);
+                       }
+                       latestTrElement.append(groupElement);
+                       i++;
+                    });
+                });
+
+                // initially the Platonic class is active and the tetrahedron is showing
+                $("#platonic-tab").addClass("active");
+                $("#platonic").css("display", "block");
+                showInfoFor(solidHtmlElements[0]);
+            });
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>Polyhedra</h1>
+        </header>
+        <x3d id="solid" height="400px">
+            <scene>
+                <inline id="inlineBox" nameSpaceName="solid" url="x3d/p0.x3d"></inline>
+            </scene>
+        </X3D>
+        <div class="container">
+            <ul class="tab">
+                <li><a href="javascript:void(0)" id="platonic-tab" class="tablinks" onclick="openSolidGroup('platonic')">Platonic</a></li>
+                <li><a href="javascript:void(0)" id="archimedean-tab" class="tablinks" onclick="openSolidGroup('archimedean')">Archimedean</a></li>
+                <li><a href="javascript:void(0)" id="kepler-tab" class="tablinks" onclick="openSolidGroup('kepler')">Kepler</a></li>
+                <li><a href="javascript:void(0)" id="prism-tab" class="tablinks" onclick="openSolidGroup('prism')">Prisms</a></li>
+                <li><a href="javascript:void(0)" id="johnson-tab" class="tablinks" onclick="openSolidGroup('johnson')">Johnson</a></li>
+                <li><a href="javascript:void(0)" id="catalan-tab" class="tablinks" onclick="openSolidGroup('catalan')">Catalan</a></li>
+                <li><a href="javascript:void(0)" id="nonconvex-tab" class="tablinks" onclick="openSolidGroup('nonconvex')">Other Non-Convex</a></li>
+            </ul>
+            <div id="platonic" class="tabcontent">
+                <em>Platonic solids</em> are convex regular polyhedra (one type of regular polygon and the same number of polygons at each vertex). There are 5 of them. <br/>
+                <br/>
+            </div>
+
+            <div id="archimedean" class="tabcontent">
+                The <em>Archimedean solids</em> are the polyhedra other than Platonic solids which are convex, have regular faces,
+                and whose symmetry group is transitive on vertices.  There are 13 of them.<br/>
+                <br/>
+            </div>
+
+            <div id="kepler" class="tabcontent">
+                <em>Kepler-Poinsot solids</em> are the non-convex regular polyhedra. There are 4 of them.<br/>
+                <br/>
+            </div>
+
+            <div id="prism" class="tabcontent">
+                A <em>prism</em> consists of two copies of a polygon, one a translation of the other, joined by parallelograms on all sides.
+                In an <em>antiprism</em>, one of the polygons is rotated (in its plane), and triangles join the top and bottom.
+                Since the base can be an arbitrary polygon, there are infinitely many prisms and antiprisms.
+                Here we show a few of them with a regular polygon for the base, joined by squares or equilateral triangles.<br/>
+                <br/>
+            </div>
+
+            <div id="johnson" class="scrollable tabcontent">
+                A <em>Johnson solid</em> is a convex polyhedron where all faces are regular, which is not a Platonic solid, Archimedean solid, prism, or antiprism.
+                In 1966, Johnson conjectured that there were exactly 92 of them, and gave them the names and numbers below.  The conjecture was proved by Zalgaller in 1969.  Scroll down for the complete list.<br/>
+                <br/>
+            </div>
+
+            <div id="catalan" class="tabcontent">
+                The <em>Catalan solids</em> are the duals of the Archimedean solids.  There are 13 of them.<br/>
+                <br/>
+            </div>
+
+            <div id="nonconvex" class="tabcontent">
+            </div>
+        </div>
+        <div id="instructions">
+            Left click + drag = rotate; ctrl + left click + drag = pan; right click (or alt+left click) + drag = zoom.  <a href="https://www.x3dom.org/documentation/interaction/">Full x3dom control documentation</a><br/>
+            If viewing area is blank or controls seem messed up, try clicking on the polyhedron name again in the menu on the right. <br/>
+            Not working? <a href="https://www.x3dom.org/contact/">Check if your browser supports X3DOM</a>
+        </div>
+        <div id="solidInfo">
+            <ul>
+                <li>Name: <span id="solidName"></span></li>
+                <li>Vertices: <span id="solidVertices"></span></li>
+                <li>Faces: <span id="solidFaces"></span></li>
+                <li>Face types: <span id="solidFaceTypes"></span></li>
+            </ul>
+        </div>
+        <footer>
+            All polyhedra data from the <a href="http://www.netlib.org/polyhedra/">polyhedron database at Netlib</a>, with some corrections by
+            <a href="http://www.georgehart.com/virtual-polyhedra/netlib-info.html">George Hart</a>.<br/>
+            Questions or comments?  Email Ted Hwa at <a href="mailto:hwatheod@cs.stanford.edu">hwatheod@cs.stanford.edu</a>
+        </footer>
+    </body>
+</html>
