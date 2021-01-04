@@ -10,10 +10,10 @@ def generate_x3d(solid):
     number = solid['number']
 
     ##### Convert to X3D specific format strings
-    edge_count = sum(map(len, faces)) / 2
+    edge_count = sum(map(len, faces)) // 2
     indexedLineSet_colorIndex = ' '.join(['0']*edge_count)
     indexedLineSet_coordIndex = ''
-    indexedFaceSet_colorIndex = ' '.join(map(str, map(len, faces)))
+    indexedFaceSet_colorIndex = ' '.join(map(str, list(map(len, faces))))
     indexedFaceSet_coordIndex = ''
     edge_set = set()
     for face in faces:

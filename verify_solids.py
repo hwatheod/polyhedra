@@ -43,6 +43,6 @@ if __name__ == "__main__":
         if result == []:
             pass
         else:
-            print str(solid['number']) + ' ' + solid['name'] + ' may be broken. '
+            print(str(solid['number']) + ' ' + solid['name'] + ' may be broken. ')
             for error in result:
-                print error
+                print(error)

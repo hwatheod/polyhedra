@@ -11,7 +11,7 @@ for path, dirs, files in os.walk(sys.argv[1]):
             solid = netlib_solid.read_netlib_solid(f)
             all_solids.append(solid)
         except IOError:
-            print 'File ' + os.path.join(path, file) + ' skipped'
+            print('File ' + os.path.join(path, file) + ' skipped')
 
 f = open(sys.argv[2], 'w')
 je = json.JSONEncoder()

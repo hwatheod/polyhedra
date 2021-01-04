@@ -15,27 +15,27 @@ def section(file, section_name):
                 return
             yield line
     if not section_found:
-        raise IOError, "Section " + section_name + " not found"
+        raise IOError("Section " + section_name + " not found")
 
 
 def read_netlib_solid(netlib_file):
-    name = section(netlib_file, 'name').next()
-    number = section(netlib_file, 'number').next()
+    name = next(section(netlib_file, 'name'))
+    number = next(section(netlib_file, 'number'))
 
     solid_section = section(netlib_file, 'solid')
-    face_count, largest_face = map(int, solid_section.next().split(' '))
+    face_count, largest_face = list(map(int, next(solid_section).split(' ')))
     faces = [0]*face_count
     for i, line in enumerate(solid_section):
-        faces[i] = map(int, line.split(' ')[1:])
+        faces[i] = list(map(int, line.split(' ')[1:]))
 
     vertices_section = section(netlib_file, 'vertices')
-    total_vertices, net_vertices = map(int, vertices_section.next().split(' '))
+    total_vertices, net_vertices = list(map(int, next(vertices_section).split(' ')))
     solid_vertices = total_vertices - net_vertices
     vertices = [0] * solid_vertices
     for i, line in enumerate(vertices_section):
         if i < net_vertices:
             continue
-        vertices[i - net_vertices] = map(float, line.split(' '))
+        vertices[i - net_vertices] = list(map(float, line.split(' ')))
 
     for face in faces:
         for i, val in enumerate(face):
@@ -54,7 +54,7 @@ def write_netlib_solid(solid, filename):
     f.write(str(number) + '\n')
     f.write(':solid\n')
     num_faces = len(solid['faces'])
-    max_face = max(map(len, solid['faces']))
+    max_face = max(list(map(len, solid['faces'])))
     f.write(str(num_faces) + ' ' + str(max_face) + '\n')
     for face in solid['faces']:
         f.write(str(len(face)) + ' ')
