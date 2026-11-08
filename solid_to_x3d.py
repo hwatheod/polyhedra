@@ -58,7 +58,7 @@ def generate_x3d(solid):
     inner_color = ET.SubElement(indexedLineSet, 'color', attrib = {'color': '0 0 0'})
 
     for elt in x3d.iter():
-        if elt.getchildren() == [] and not elt.text:
+        if list(elt) == [] and not elt.text:
             elt.text = ' '
 
     return ET.ElementTree(x3d)
