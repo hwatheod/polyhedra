@@ -18,4 +18,5 @@ python3 fix_stellated_dodecahedra.py
 
 echo "--- Copying HTML and CSS files ---"
 cp polyhedra.html build
+mv build/polyhedra.html build/index.html
 cp solid.css build
